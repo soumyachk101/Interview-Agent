@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+    /* Colors */
+    --color-ivory-light: #FAF7F2;
+    --color-ivory-DEFAULT: #F5F0E8;
+    --color-ivory-dark: #EDE5D8;
+
+    --color-mahogany-900: #2C1A0E;
+    --color-mahogany-800: #3D2414;
+    --color-mahogany-700: #5C3520;
+    --color-mahogany-600: #7A4730;
+    --color-mahogany-500: #8C523A;
+    --color-mahogany-400: #A8734E;
+    --color-mahogany-200: #D4A882;
+
+    --color-gold-600: #8C6318;
+    --color-gold-500: #C9993A;
+    --color-gold-400: #D9AE5C;
+    --color-gold-300: #E8C97A;
+    --color-gold-100: #F7EDD0;
+    --color-gold-shimmer: #F2D980;
+
+    --color-steel-700: #1C3A52;
+    --color-steel-600: #2A5070;
+    --color-steel-500: #3A6B8C;
+    --color-steel-400: #5A8FAD;
+    --color-steel-200: #A8C8DB;
+    --color-steel-100: #D6E8F0;
+
+    --color-success-700: #1A4D2E;
+    --color-success-500: #2E7D4F;
+    --color-success-200: #A8D5B5;
+
+    --color-warning-600: #8C5200;
+    --color-warning-400: #D4850A;
+    --color-warning-100: #F5DBA0;
+
+    --color-danger-700: #5C1A1A;
+    --color-danger-500: #A83232;
+    --color-danger-200: #E8AAAA;
+
+    /* Fonts */
+    --font-display: "Playfair Display", Georgia, serif;
+    --font-body: "Lora", Georgia, serif;
+    --font-mono: "Courier Prime", "Courier New", monospace;
+    --font-ui: "Source Serif 4", Georgia, serif;
+
+    /* Shadows */
+    --shadow-skeuo-1: -1px -1px 3px rgba(255, 255, 255, 0.45), 1px 1px 4px rgba(44, 26, 14, 0.15);
+    --shadow-skeuo-2: -3px -3px 8px rgba(255, 255, 255, 0.85), 3px 3px 10px rgba(44, 26, 14, 0.30);
+    --shadow-skeuo-3: -4px -4px 12px rgba(255, 255, 255, 0.85), 4px 4px 16px rgba(44, 26, 14, 0.30);
+    --shadow-skeuo-inset: inset 0 2px 4px rgba(44, 26, 14, 0.35), 0 1px 0 rgba(255, 255, 255, 0.70);
+
+    /* Backgrounds */
+    --background-image-leather: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.06"/%3E%3C/svg%3E'), linear-gradient(180deg, #3D2414 0%, #2C1A0E 100%);
+    --background-image-gold-gold: linear-gradient(180deg, #E8C97A 0%, #C9993A 100%);
+}
+
+@layer base {
+    :root {
+        --bg-page: #F5F0E8;
+        --text-primary: #2C1A0E;
+        --text-secondary: #5C3520;
+        --text-muted: #A8734E;
+    }
+
+    body {
+        background-color: var(--bg-page);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        min-height: 100vh;
+        background-image: radial-gradient(circle at 50% 10%, #FAF7F2 0%, #F5F0E8 100%);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        font-family: var(--font-display);
+    }
+}
+
+@utility elevation-1 {
+    box-shadow: var(--shadow-skeuo-1);
+}
+
+@utility elevation-2 {
+    box-shadow: var(--shadow-skeuo-2);
+}
+
+@utility elevation-3 {
+    box-shadow: var(--shadow-skeuo-3);
+}
+
+@utility elevation-inset {
+    box-shadow: var(--shadow-skeuo-inset);
+}
+
+@utility btn-skeuo {
+    transition: all 0.2s;
+
+    &:active {
+        transform: translateY(2px);
+        box-shadow: var(--shadow-skeuo-inset);
+    }
+}
+
+@utility card-embossed {
+    border: 1px solid rgba(140, 82, 58, 0.1);
+    background: linear-gradient(to bottom right, var(--color-ivory-light), var(--color-ivory-dark));
+    box-shadow: var(--shadow-skeuo-2);
+    border-radius: 0.75rem;
+}
