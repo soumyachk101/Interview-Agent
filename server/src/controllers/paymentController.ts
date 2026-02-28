@@ -3,8 +3,13 @@ import { razorpay } from '../config/razorpay';
 import { Transaction } from '../models/Transaction';
 import crypto from 'crypto';
 
-export const createOrder = async (req: any, res: Response) => {
+export const createOrder = async (req: any, res: Response): Promise<void> => {
     try {
+        if (!razorpay) {
+            res.status(500).json({ message: "Payment gateway is not configured on this server." });
+            return;
+        }
+
         const { amount, resumeId, interviewType } = req.body;
 
         const options = {
@@ -13,7 +18,7 @@ export const createOrder = async (req: any, res: Response) => {
             receipt: `receipt_${Date.now()}`,
         };
 
-        const order = await razorpay.orders.create(options);
+        const order = await razorpay!.orders.create(options);
 
         await Transaction.create({
             userId: req.user._id,
@@ -29,13 +34,19 @@ export const createOrder = async (req: any, res: Response) => {
     }
 };
 
-export const verifyPayment = async (req: any, res: Response) => {
+export const verifyPayment = async (req: any, res: Response): Promise<void> => {
     try {
+        const secret = process.env.RAZORPAY_KEY_SECRET;
+        if (!secret) {
+            res.status(500).json({ message: "Payment gateway is not configured on this server." });
+            return;
+        }
+
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
         const body = razorpay_order_id + "|" + razorpay_payment_id;
         const expectedSignature = crypto
-            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+            .createHmac("sha256", secret)
             .update(body.toString())
             .digest("hex");
 
