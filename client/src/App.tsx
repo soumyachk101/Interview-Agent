@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { Home } from "./pages/Home/Home";
 import { Login } from "./pages/Auth/Login";
 import { Register } from "./pages/Auth/Register";
+import { ForgotPassword } from "./pages/Auth/ForgotPassword";
 import { CandidateDashboard } from "./pages/Dashboard/CandidateDashboard";
 import { SetupInterview } from "./pages/Resume/SetupInterview";
 import { InterviewRoom } from "./pages/Interview/InterviewRoom";
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/dashboard" element={<CandidateDashboard />} />
                 <Route path="/setup" element={<SetupInterview />} />
                 <Route path="/interview-room" element={<InterviewRoom />} />

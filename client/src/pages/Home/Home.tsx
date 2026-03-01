@@ -3,9 +3,94 @@ import { Footer } from "../../components/layout/Footer";
 import { Button } from "../../components/common/Button";
 import { Card, CardTitle, CardContent } from "../../components/common/Card";
 import { Brain, Target, MessageSquare, CheckCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
+import toast from "react-hot-toast";
+
+// Helper to load razorpay script securely
+const loadRazorpay = () => {
+    return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
+};
 
 export const Home = () => {
+    const { user } = useAuthStore();
+    const navigate = useNavigate();
+
+    const handleUpgrade = async () => {
+        if (!user) {
+            toast.error("Please login to upgrade.");
+            navigate("/login");
+            return;
+        }
+
+        const res = await loadRazorpay();
+        if (!res) {
+            toast.error("Razorpay SDK failed to load. Are you offline?");
+            return;
+        }
+
+        try {
+            // Create order on backend
+            // Hardcoding amount for Premium Unlimited: 1900 INR (approx $19, but Razorpay works in INR)
+            const orderRes = await fetch("http://localhost:5000/api/payments/create-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${user.token}` },
+                body: JSON.stringify({ amount: 1500, interviewType: "premium", resumeId: "dummy" }), // Using dummy data for now
+            });
+            const order = await orderRes.json();
+
+            if (!orderRes.ok) throw new Error(order.message || "Failed to create order");
+
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_TYuQksvjB11k4B", // Fallback test key if missing
+                amount: order.amount,
+                currency: order.currency,
+                name: "Interview Agent",
+                description: "Premium Unlimited Subscription",
+                order_id: order.id,
+                handler: async function (response: any) {
+                    try {
+                        const verifyRes = await fetch("http://localhost:5000/api/payments/verify-payment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${user.token}` },
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                            }),
+                        });
+                        const data = await verifyRes.json();
+                        if (data.success) {
+                            toast.success("Payment successful! You are now a Premium user.");
+                        } else {
+                            toast.error("Payment verification failed.");
+                        }
+                    } catch (err) {
+                        toast.error("Payment verification error.");
+                    }
+                },
+                prefill: {
+                    name: user.name,
+                    email: user.email,
+                },
+                theme: {
+                    color: "#D4AF37", // Gold color from theme
+                },
+            };
+
+            const paymentObject = new (window as any).Razorpay(options);
+            paymentObject.open();
+        } catch (error: any) {
+            toast.error(error.message || "Something went wrong during payment.");
+        }
+    };
+
     return (
         <div className="flex min-h-screen flex-col bg-ivory">
             <Navbar />
@@ -86,7 +171,7 @@ export const Home = () => {
                                     <li className="flex items-center gap-2"><CheckCircle className="w-5 h-5 text-success-500" /> Comprehensive skill gap reports</li>
                                     <li className="flex items-center gap-2"><CheckCircle className="w-5 h-5 text-success-500" /> Priority access to new domains</li>
                                 </ul>
-                                <Button className="w-full h-12">Upgrade Now</Button>
+                                <Button onClick={handleUpgrade} className="w-full h-12">Upgrade Now</Button>
                             </Card>
                         </div>
                     </div>

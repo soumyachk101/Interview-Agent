@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
             code: { type: String, select: false },
             expiresAt: { type: Date, select: false },
         },
+        resetPasswordOtp: {
+            code: { type: String, select: false },
+            expiresAt: { type: Date, select: false },
+        },
         defaultResumeId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Resume",
