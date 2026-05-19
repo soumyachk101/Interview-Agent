@@ -34,7 +34,7 @@ export const Login = () => {
                 if (data.requiresVerification) {
                     toast.error(data.message);
                     // Could potentially redirect them to a verify page or the register page to continue
-                    navigate("/register"); // the user could login via verify there, or we can make a standalone verification 
+                    navigate("/register", { state: { email, requiresVerification: true } });
                 } else {
                     toast.error(data.message || "Invalid credentials.");
                 }
