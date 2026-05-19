@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/common/Card";
 import { Input } from "../../components/common/Input";
 import { Button } from "../../components/common/Button";
@@ -8,11 +8,12 @@ import toast from "react-hot-toast";
 
 export const Register = () => {
     const navigate = useNavigate();
-    const [step, setStep] = useState<1 | 2>(1);
+    const location = useLocation();
+    const [step, setStep] = useState<1 | 2>(location.state?.requiresVerification ? 2 : 1);
 
     // Form state
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
+    const [email, setEmail] = useState(location.state?.email || "");
     const [password, setPassword] = useState("");
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
